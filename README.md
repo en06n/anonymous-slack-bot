@@ -1,4 +1,4 @@
-# Serverless Anonymous Slack Bot
+# 匿名投稿Bot
 
 AWS上で動作する、匿名投稿が可能なSlack Botです。Slackのスラッシュコマンドを利用して、チャンネルやスレッドに匿名でメッセージを投稿できます。
 
