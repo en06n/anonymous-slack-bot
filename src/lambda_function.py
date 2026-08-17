@@ -6,7 +6,7 @@ import json
 
 def send_text_response(channel_id, response_text, thread_ts=None):
     SLACK_URL = "https://slack.com/api/chat.postMessage"
-    SLACK_TOKEN = 'xoxb-xxxxxx' # Slack Apps からトークンを取得
+    SLACK_TOKEN = 'XXXXXXXXXX'
 
     # Slackに送るデータを作成
     data = {
