@@ -77,7 +77,7 @@ test('shortcut on a parent or reply targets the parent thread', async () => {
   ]) {
     const { handler, calls } = fixture();
     const response = await handler(interactive({
-      type: 'message_action', callback_id: 'anonymous_reply', trigger_id: 'trigger',
+      type: 'message_action', api_app_id: undefined, callback_id: 'anonymous_reply', trigger_id: 'trigger',
       channel: { id: 'C1' }, message,
     }));
     assert.equal(response.status, 200);
@@ -192,4 +192,19 @@ test('publishes a separately uploaded, sanitized image in the target thread', as
       initial_comment: 'hello &lt;@U1&gt;',
     }],
   ]);
+});
+
+test('uses the HTTP encoding required by Slack file endpoints', async () => {
+  const calls: { url: URL; options?: RequestInit }[] = [];
+  const api = slackClient('test', async (url, options) => {
+    calls.push({ url: new URL(String(url)), options });
+    return Response.json({ ok: true });
+  });
+  await api('files.info', { file: 'F123' });
+  await api('files.getUploadURLExternal', { length: 42, filename: 'anonymous-image.png' });
+  assert.equal(calls[0].options?.method, 'GET');
+  assert.equal(calls[0].url.searchParams.get('file'), 'F123');
+  assert.equal(calls[0].options?.body, undefined);
+  assert.equal(calls[1].options?.method, 'POST');
+  assert.equal(String(calls[1].options?.body), 'length=42&filename=anonymous-image.png');
 });

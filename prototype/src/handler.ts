@@ -62,8 +62,12 @@ export function createHandler(
     let submission = false;
     try {
       const payload = encoded === null ? Object.fromEntries(form) : JSON.parse(encoded);
-      if ((encoded === null ? payload.team_id : payload.team?.id) !== teamId ||
-          payload.api_app_id !== appId) return new Response(null, { status: 403 });
+      const messageShortcut = encoded !== null && payload.type === 'message_action';
+      // Slack's message shortcut payload can omit api_app_id. The signing secret is app-specific.
+      const appMatches = payload.api_app_id === appId || (messageShortcut && payload.api_app_id === undefined);
+      if ((encoded === null ? payload.team_id : payload.team?.id) !== teamId || !appMatches) {
+        return new Response(null, { status: 403 });
+      }
       user = encoded === null ? payload.user_id : payload.user?.id;
       if (encoded === null && payload.command === '/ano') {
         destination = { channel: payload.channel_id };

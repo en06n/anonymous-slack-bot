@@ -17,10 +17,22 @@ export class SlackApiError extends Error {
 
 export function slackClient(token: string, request = fetch) {
   return async (method: string, args: object, timeout = 5000) => {
-    const response = await request(`https://slack.com/api/${method}`, {
-      method: 'POST',
-      headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-      body: JSON.stringify(args),
+    const url = new URL(`https://slack.com/api/${method}`);
+    const headers = new Headers({ authorization: `Bearer ${token}` });
+    const query = method === 'files.info';
+    let body: string | URLSearchParams | undefined;
+    if (query || method === 'files.getUploadURLExternal') {
+      const form = new URLSearchParams(Object.entries(args).map(([key, value]) => [key, String(value)]));
+      if (query) url.search = form.toString();
+      else body = form;
+    } else {
+      headers.set('content-type', 'application/json');
+      body = JSON.stringify(args);
+    }
+    const response = await request(url, {
+      method: query ? 'GET' : 'POST',
+      headers,
+      body,
       redirect: 'error',
       signal: AbortSignal.timeout(timeout),
     });
