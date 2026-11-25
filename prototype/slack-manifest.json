@@ -1,7 +1,7 @@
 {
   "display_information": { "name": "匿名投稿Bot Prototype" },
   "features": {
-    "bot_user": { "display_name": "匿名投稿 (検証用)" },
+    "bot_user": { "display_name": "anon-post-test" },
     "slash_commands": [{
       "command": "/ano",
       "url": "https://YOUR-PROTOTYPE.vercel.app/api/slack",
