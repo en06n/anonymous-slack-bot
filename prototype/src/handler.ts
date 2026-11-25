@@ -1,4 +1,4 @@
-import { slackClient, verifySignature } from './slack.js';
+import { SlackApiError, slackClient, verifySignature } from './slack.js';
 
 type Destination = { channel: string; thread?: string };
 type Publish = (destination: Destination, text: string, image?: string) => Promise<void>;
@@ -126,8 +126,9 @@ export function createHandler(
     if (text.length > 2000 || (!text && !image)) {
       return errors('body', '本文（2,000文字以内）または画像を入力してください。');
     }
-    defer(publish(destination, text, image).catch(async () => {
-      console.error('anonymous_slack_publish_failed');
+    defer(publish(destination, text, image).catch(async error => {
+      const detail = error instanceof SlackApiError ? `${error.method}:${error.code}` : 'processing_failed';
+      console.error('anonymous_slack_publish_failed', image ? 'image' : 'text', detail);
       try {
         await slack('chat.postEphemeral', {
           channel: destination.channel, user,

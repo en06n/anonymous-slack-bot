@@ -9,6 +9,12 @@ export function verifySignature(headers: Headers, raw: Uint8Array, secret: strin
   return timingSafeEqual(expected, Buffer.from(signature.slice(3), 'hex'));
 }
 
+export class SlackApiError extends Error {
+  constructor(readonly method: string, readonly code: string) {
+    super('Slack API request failed');
+  }
+}
+
 export function slackClient(token: string, request = fetch) {
   return async (method: string, args: object, timeout = 5000) => {
     const response = await request(`https://slack.com/api/${method}`, {
@@ -18,9 +24,13 @@ export function slackClient(token: string, request = fetch) {
       redirect: 'error',
       signal: AbortSignal.timeout(timeout),
     });
-    if (!response.ok) throw new Error(method);
+    if (!response.ok) throw new SlackApiError(method, `http_${response.status}`);
     const result = await response.json();
-    if (result.ok !== true) throw new Error(method);
+    if (result.ok !== true) {
+      const code = typeof result.error === 'string' && /^[a-z_]{1,48}$/.test(result.error)
+        ? result.error : 'unknown';
+      throw new SlackApiError(method, code);
+    }
     return result;
   };
 }
