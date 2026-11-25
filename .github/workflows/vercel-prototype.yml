@@ -1,0 +1,24 @@
+name: Vercel prototype checks
+on:
+  push:
+    branches: [prototype/vercel-slack-bot]
+  pull_request:
+    paths: ['prototype/**', '.github/workflows/vercel-prototype.yml']
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: prototype
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: prototype/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm test

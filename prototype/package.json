@@ -1,0 +1,22 @@
+{
+  "name": "anonymous-slack-vercel",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node --import tsx --test test/*.test.ts",
+    "check": "tsc --noEmit"
+  },
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "private": true,
+  "dependencies": {
+    "@vercel/functions": "^3.11.3",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.7",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci",
+  "buildCommand": "npm run check && npm test",
+  "outputDirectory": "public",
+  "functions": { "api/slack.ts": { "maxDuration": 45 } },
+  "git": { "deploymentEnabled": { "*": false, "prototype/vercel-slack-bot": true } }
+}

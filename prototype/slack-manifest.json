@@ -1,0 +1,23 @@
+{
+  "display_information": { "name": "匿名投稿Bot Prototype" },
+  "features": {
+    "bot_user": { "display_name": "匿名投稿 (検証用)" },
+    "slash_commands": [{
+      "command": "/ano",
+      "url": "https://YOUR-PROTOTYPE.vercel.app/api/slack",
+      "description": "匿名投稿モーダルを開く",
+      "should_escape": false
+    }],
+    "shortcuts": [{
+      "name": "匿名返信をする",
+      "type": "message",
+      "callback_id": "anonymous_reply",
+      "description": "このスレッドに匿名で返信する"
+    }]
+  },
+  "oauth_config": { "scopes": { "bot": ["commands", "chat:write", "files:read", "files:write"] } },
+  "settings": {
+    "interactivity": { "is_enabled": true, "request_url": "https://YOUR-PROTOTYPE.vercel.app/api/slack" },
+    "socket_mode_enabled": false
+  }
+}
